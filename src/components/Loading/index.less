@@ -1,0 +1,34 @@
+.loading {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: #fff;
+  z-index: 2000;
+  flex-direction: column;
+  align-items: center;
+  h1 {
+    font-weight: bolder;
+    font-size: 40px;
+    margin-top: 300px;
+    margin-bottom: 20px;
+    img {
+      width: 50px;
+      margin-right: 20px;
+      margin-bottom: 10px;
+    }
+  }
+  p {
+    margin-bottom: 30px;
+    font-size: 16px;
+  }
+}
+
+/*
+  z-index
+    普通定位 1
+    高级定位 100
+    Modal   1000
+    loading 2000
+*/

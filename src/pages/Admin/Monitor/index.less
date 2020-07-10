@@ -1,0 +1,61 @@
+@import "../../../assets/css/constants.less";
+
+.monitor-wrap {
+  margin-top: 20px;
+  background-color: #fff;
+  padding: 10px 20px;
+  .date-text {
+    margin-right: 20px;
+    cursor: pointer;
+    &.active {
+      color: @theme-color;
+    }
+  }
+  .bar-title {
+    position: absolute;
+    left: 0;
+  }
+}
+
+.factory {
+  h3 {
+    margin-left: 40px;
+    margin-bottom: 30px;
+  }
+  ul {
+    font-size: 14px;
+    list-style: none;
+  }
+  li {
+    overflow: hidden;
+    margin-bottom: 18px;
+    display: flex;
+    height: 20px;
+    line-height: 20px;
+    &:nth-child(1),
+    &:nth-child(2),
+    &:nth-child(3) {
+      .factory-key {
+        color: #fff;
+        background-color: #314659;
+      }
+    }
+  }
+  span {
+    flex: 16;
+  }
+  .factory-money {
+    float: right;
+    flex: 2;
+  }
+  .factory-key {
+    flex: 1;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+
+    margin-right: 20px;
+    border-radius: 50%;
+    background-color: #fafafa;
+  }
+}
