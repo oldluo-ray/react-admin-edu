@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 //导入antd组件
 import { Link } from 'react-router-dom'
 import { Card, Button, Form, Input, Select } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
+
+//导入异步action
+import { getSubjectList } from '../../redux'
 
 // 导入样式
 import './index.less'
@@ -33,7 +37,18 @@ const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo)
 }
 
-export default class AddSubject extends Component {
+@connect(
+  state => ({ subjectList: state.subjectList }),
+  { getSubjectList }
+)
+class AddSubject extends Component {
+  componentDidMount() {
+    console.log(this.props)
+    // 组件挂载成功,立刻发送请求获取一级课程分类数据
+    // 由于这是后台管理系统,一级课程分类数据可能随时会变化,所以不建议直接从redux中拿数据,推荐使用redux提供的函数,发送请求,获取最新的数据,存到redux中,然后再从redux里面拿
+    this.props.getSubjectList(1, 10)
+  }
+
   render() {
     return (
       <Card
@@ -84,7 +99,18 @@ export default class AddSubject extends Component {
             ]}
           >
             <Select>
-              <Option value={1}>{'一级菜单'}</Option>
+              {/* 一级课程分类 这一项不在获取的动态数据中,所以在这里写死*/}
+              <Option value={0} key={0}>
+                {'一级课程分类'}
+              </Option>
+              {/* 根据拿到一级课程分类,动态渲染 */}
+              {this.props.subjectList.items.map(subject => {
+                return (
+                  <Option value={subject._id} key={subject._id}>
+                    {subject.title}
+                  </Option>
+                )
+              })}
             </Select>
           </Form.Item>
 
@@ -99,3 +125,5 @@ export default class AddSubject extends Component {
     )
   }
 }
+
+export default AddSubject
