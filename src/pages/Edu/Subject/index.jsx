@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // 导入antd组件
-import { Button, Table } from 'antd'
+import { Button, Table, Tooltip, Input } from 'antd'
 // 导入antd-图标
 import { PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons'
 
@@ -16,65 +16,6 @@ import { getSubjectList, getSecSubjectList } from './redux'
 //导入样式文件
 import './index.less'
 
-const columns = [
-  // columns 定义表格的列
-  // title属性: 表示列的名称
-  // dataIndex决定: 这一列展示的是data中哪一项的数据
-  { title: '分类名称', dataIndex: 'title', key: 'title' },
-
-  {
-    title: '操作',
-    dataIndex: '', //表示这一列不渲染data里的数据
-    key: 'x',
-    // 自定义这一列要渲染的内容
-    render: () => (
-      <>
-        <Button type='primary' className='update-btn'>
-          <FormOutlined />
-        </Button>
-        <Button type='danger'>
-          <DeleteOutlined />
-        </Button>
-      </>
-    ),
-    // 设置这一列的宽度
-    width: 200
-  }
-]
-
-const data = [
-  {
-    key: 1,
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    description:
-      'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.'
-  },
-  {
-    key: 2,
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    description:
-      'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.'
-  },
-  {
-    key: 3,
-    name: 'Not Expandable',
-    age: 29,
-    address: 'Jiangsu No. 1 Lake Park',
-    description: 'This not expandable'
-  },
-  {
-    key: 4,
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    description:
-      'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.'
-  }
-]
 // {subjectList: {total:0, items: []}}
 @connect(
   state => ({ subjectList: state.subjectList }),
@@ -84,6 +25,14 @@ const data = [
 class Subject extends Component {
   // 直接给当前组件实例,添加currentPage属性,表示当前是第几页
   currentPage = 1
+
+  state = {
+    // subjectId的作用:
+    // 1. 如果subjectId没有表示表格每一行直接展示课程分类的title,如果有值(应该就是要修改数据的id), 就展示input
+    // 2. 修改数据需要subjectid
+    subjectId: '',
+    subjectTitle: '' //用于设置受控组件
+  }
 
   componentDidMount() {
     // this.getSubjectList(1, 10)
@@ -138,8 +87,96 @@ class Subject extends Component {
       this.props.getSecSubjectList(record._id)
     }
   }
+
+  // 点击更新按钮的事件处理函数
+  handleUpdateClick = value => {
+    //修改subjectid
+    return () => {
+      // console.log(value)
+      this.setState({
+        subjectId: value._id,
+        subjectTitle: value.title
+      })
+    }
+  }
+
+  // 修改数据时,受控组件input的change回调函数
+  handleTitleChange = e => {
+    this.setState({
+      subjectTitle: e.target.value
+    })
+  }
   render() {
-    console.log(this.props)
+    // 注意:这个columns必须写到render中,因为state变化,render会调用.这个columns才会重新执行
+    const columns = [
+      // columns 定义表格的列
+      // title属性: 表示列的名称
+      // dataIndex决定: 这一列展示的是data中哪一项的数据
+      {
+        title: '分类名称',
+        // dataIndex: 'title',
+        key: 'title',
+        render: value => {
+          //如果state里面存储的id 和 这一条数据的id相同,就展示input
+          // 由于第一页数据有10条,所以这个render的回调会执行10次
+          // 接收value是对饮的每一行数据
+          if (this.state.subjectId === value._id) {
+            return (
+              <Input
+                value={this.state.subjectTitle}
+                className='subject-input'
+                onChange={this.handleTitleChange}
+              />
+            )
+          }
+
+          return <span>{value.title}</span>
+        }
+      },
+
+      {
+        title: '操作',
+        dataIndex: '', //表示这一列不渲染data里的数据
+        key: 'x',
+        // 自定义这一列要渲染的内容
+        render: value => {
+          //判断当前数据的id是否和state里面subjectId的值是相同的,如果相同,展示确认和取消按钮,否则展示修改和删除按钮
+
+          if (this.state.subjectId === value._id) {
+            return (
+              <>
+                <Button type='primary' className='update-btn'>
+                  确认
+                </Button>
+                <Button type='danger'>取消</Button>
+              </>
+            )
+          }
+
+          return (
+            <>
+              <Tooltip title='更新课程分类'>
+                <Button
+                  type='primary'
+                  className='update-btn'
+                  onClick={this.handleUpdateClick(value)}
+                >
+                  <FormOutlined />
+                </Button>
+              </Tooltip>
+              <Tooltip title='删除课程分类'>
+                <Button type='danger'>
+                  <DeleteOutlined />
+                </Button>
+              </Tooltip>
+            </>
+          )
+        },
+        // 设置这一列的宽度
+        width: 200
+      }
+    ]
+
     return (
       <div className='subject'>
         <Button
