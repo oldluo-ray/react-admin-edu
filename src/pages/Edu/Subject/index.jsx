@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 // import { reqGetSubjectList } from '@api/edu/subject'
 
 // 导入redux中的异步anction
-import { getSubjectList } from './redux'
+import { getSubjectList, getSecSubjectList } from './redux'
 
 //导入样式文件
 import './index.less'
@@ -79,7 +79,7 @@ const data = [
 @connect(
   state => ({ subjectList: state.subjectList }),
   // 这里传入的是一个异步action.但是在展示组件中使用的函数,是通过connect进行封装之后的,虽然函数名一样,但是并不是同一个函数
-  { getSubjectList }
+  { getSubjectList, getSecSubjectList }
 )
 class Subject extends Component {
   // 直接给当前组件实例,添加currentPage属性,表示当前是第几页
@@ -125,6 +125,19 @@ class Subject extends Component {
     // 注意: 新增是在教学模块下面,所以路由前面要加edu
     this.props.history.push('/edu/subject/add')
   }
+
+  // 点击可展开按钮触发
+  // expanded: true表示展开了, false表示关闭了
+  // record: 就是对应的这一行的数据
+  handleClickExpand = (expanded, record) => {
+    // console.log(expanded, record)
+    //判断如果是展开就请求二级菜单数据,关闭就什么都不做
+    if (expanded) {
+      // 请求二级菜单数据
+      // 需要传入parentId
+      this.props.getSecSubjectList(record._id)
+    }
+  }
   render() {
     console.log(this.props)
     return (
@@ -143,11 +156,13 @@ class Subject extends Component {
           // 控制可展开项
           expandable={{
             // 可展开项展示的内容
-            expandedRowRender: record => (
-              <p style={{ margin: 0 }}>{record.description}</p>
-            ),
-            // 控制这一列是否可展开
-            rowExpandable: record => record.name !== 'Not Expandable'
+            // 注意:使用这个属性会把二级菜单数据,渲染到一级菜单的位置上
+            // 所以不使用这个
+            // expandedRowRender: record => (
+            //   <p
+            //当点击可展开按钮,触发的事件处理函数
+
+            onExpand: this.handleClickExpand
           }}
           //表示里面的数据
           dataSource={this.props.subjectList.items}

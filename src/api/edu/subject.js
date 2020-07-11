@@ -9,11 +9,21 @@ const BASE_URL = '/admin/edu/subject'
 // 这里有主机名,就不会和proxy拼接了
 // const MOCK_URL = `http://localhost:8888${BASE_URL}`
 
-// 获取讲师
+// 获取课程分类
 export function reqGetSubjectList(page, limit) {
   // request返回一个promise
   return request({
     url: `${BASE_URL}/${page}/${limit}`,
+    // http://localhost:8888/admin/edu/subject/1/10
+    method: 'GET'
+  })
+}
+// 获取二级课程分类
+export function reqGetSecSubjectList(parentId) {
+  // request返回一个promise
+  return request({
+    // /admin/edu/subject/get/:parentId
+    url: `${BASE_URL}/get/${parentId}`,
     // http://localhost:8888/admin/edu/subject/1/10
     method: 'GET'
   })
