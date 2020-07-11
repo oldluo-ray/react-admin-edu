@@ -6,8 +6,10 @@ import { Link } from 'react-router-dom'
 import { Card, Button, Form, Input, Select } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 
-//导入异步action
-import { getSubjectList } from '../../redux'
+//导入异步action  由于要将新的数据和老数据拼接起来,所以弃用redux
+// import { getSubjectList } from '../../redux'
+
+import { reqGetSubjectList } from '@api/edu/subject'
 
 // 导入样式
 import './index.less'
@@ -37,16 +39,52 @@ const onFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo)
 }
 
-@connect(
-  state => ({ subjectList: state.subjectList }),
-  { getSubjectList }
-)
+// @connect(
+//   state => ({ subjectList: state.subjectList }),
+//   { getSubjectList }
+// )
 class AddSubject extends Component {
-  componentDidMount() {
-    console.log(this.props)
+  state = {
+    subjectList: {
+      total: 0,
+      items: []
+    }
+  }
+  // 用来存储下一次请求的页数
+  page = 1
+  async componentDidMount() {
+    // console.log(this.props)
     // 组件挂载成功,立刻发送请求获取一级课程分类数据
     // 由于这是后台管理系统,一级课程分类数据可能随时会变化,所以不建议直接从redux中拿数据,推荐使用redux提供的函数,发送请求,获取最新的数据,存到redux中,然后再从redux里面拿
-    this.props.getSubjectList(1, 10)
+    // this.props.getSubjectList(this.page++, 10)
+    // this.page++
+
+    // 直接请求数据
+    const res = await reqGetSubjectList(this.page++, 10)
+    // console.log(res)
+    this.setState({
+      subjectList: res
+    })
+  }
+
+  // 加载更多一级课程分类数据
+  handleloadMore = async () => {
+    // this.props.getSubjectList(this.page++, 10)
+
+    const res = await reqGetSubjectList(this.page++, 10)
+
+    // 获取原来的数据
+    // this.state.subjectList.items
+    // 新的数据和老的数据拼接
+    // res
+    const newItems = [...this.state.subjectList.items, ...res.items]
+
+    this.setState({
+      subjectList: {
+        total: res.total,
+        items: newItems
+      }
+    })
   }
 
   render() {
@@ -98,13 +136,30 @@ class AddSubject extends Component {
               }
             ]}
           >
-            <Select>
+            <Select
+              // 自定义下拉列表中展示内容
+              dropdownRender={menu => {
+                return (
+                  <>
+                    {/* 表示把我们写在子节点位置的option渲染到这里 */}
+                    {menu}
+                    {/* 如果total的值,比items的长度大,说明还有数据 */}
+                    {this.state.subjectList.total >
+                      this.state.subjectList.items.length && (
+                      <Button type='link' onClick={this.handleloadMore}>
+                        加载更多数据
+                      </Button>
+                    )}
+                  </>
+                )
+              }}
+            >
               {/* 一级课程分类 这一项不在获取的动态数据中,所以在这里写死*/}
               <Option value={0} key={0}>
                 {'一级课程分类'}
               </Option>
               {/* 根据拿到一级课程分类,动态渲染 */}
-              {this.props.subjectList.items.map(subject => {
+              {this.state.subjectList.items.map(subject => {
                 return (
                   <Option value={subject._id} key={subject._id}>
                     {subject.title}
