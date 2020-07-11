@@ -3,13 +3,13 @@ import { connect } from 'react-redux'
 
 //导入antd组件
 import { Link } from 'react-router-dom'
-import { Card, Button, Form, Input, Select } from 'antd'
+import { Card, Button, Form, Input, Select, message } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 
 //导入异步action  由于要将新的数据和老数据拼接起来,所以弃用redux
 // import { getSubjectList } from '../../redux'
 
-import { reqGetSubjectList } from '@api/edu/subject'
+import { reqGetSubjectList, reqAddSubjectList } from '@api/edu/subject'
 
 // 导入样式
 import './index.less'
@@ -28,15 +28,6 @@ const layout = {
   wrapperCol: {
     span: 6
   }
-}
-
-// 点击添加按钮,表单校验成功之后的回调函数
-const onFinish = values => {
-  console.log('Success:', values)
-}
-// 表单校验失败的回调函数
-const onFinishFailed = errorInfo => {
-  console.log('Failed:', errorInfo)
 }
 
 // @connect(
@@ -87,6 +78,21 @@ class AddSubject extends Component {
     })
   }
 
+  // 点击添加按钮,表单校验成功之后的回调函数
+  onFinish = async values => {
+    // console.log('Success:', values)
+    try {
+      // 发送请求新增课程分类
+      await reqAddSubjectList(values.subjectname, values.parentid)
+      // 提示一下
+      message.success('课程分类添加成功')
+      //跳回到subjectlist页面
+      this.props.history.push('/edu/subject/list')
+    } catch {
+      message.error('课程分类添加失败')
+    }
+  }
+
   render() {
     return (
       <Card
@@ -104,9 +110,9 @@ class AddSubject extends Component {
           {...layout}
           name='subject'
           // 当点击表单内的提交按钮,onFinish会触发
-          onFinish={onFinish}
+          onFinish={this.onFinish}
           // 提交失败的时候会触发
-          onFinishFailed={onFinishFailed}
+          // onFinishFailed={onFinishFailed}
         >
           {/* form表单中每一个表单项都需要使用Form.Item包裹 */}
           <Form.Item

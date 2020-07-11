@@ -28,3 +28,18 @@ export function reqGetSecSubjectList(parentId) {
     method: 'GET'
   })
 }
+
+// 添加课程分类
+export function reqAddSubjectList(title, parentId) {
+  console.log(title, parentId)
+  // request返回一个promise
+  return request({
+    url: `${BASE_URL}/save`,
+    // http://localhost:8888/admin/edu/subject/1/10
+    method: 'POST',
+    data: {
+      title,
+      parentId
+    }
+  })
+}
