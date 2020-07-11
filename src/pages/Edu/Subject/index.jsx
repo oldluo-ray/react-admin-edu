@@ -111,6 +111,7 @@ class Subject extends Component {
     this.currentPage = page
   }
 
+  // 一页展示几条数据变化时触发的回调函数
   handleSizeChange = (current, size) => {
     // console.log(current, size)
     // this.getSubjectList(current, size)
@@ -118,11 +119,21 @@ class Subject extends Component {
     // 动态给currentPage赋值,保证当前高亮的页码和实际获取的页码数据保持一致
     this.currentPage = current
   }
+
+  // 点击跳转到添加课程分类中
+  handleGoAddSubject = () => {
+    // 注意: 新增是在教学模块下面,所以路由前面要加edu
+    this.props.history.push('/edu/subject/add')
+  }
   render() {
     console.log(this.props)
     return (
       <div className='subject'>
-        <Button type='primary' className='subject-btn'>
+        <Button
+          type='primary'
+          className='subject-btn'
+          onClick={this.handleGoAddSubject}
+        >
           <PlusOutlined />
           新建
         </Button>
