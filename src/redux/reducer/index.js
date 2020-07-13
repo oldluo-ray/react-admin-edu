@@ -7,8 +7,9 @@ import { user } from '@comps/Authorized/redux'
 import { userList } from '@pages/Acl/User/redux'
 import { roleList } from '@pages/Acl/Role/redux'
 import { menuList } from '@pages/Acl/Permission/redux'
-// ray 增加subjectlist的reducer
+// ray 增加subjectlist的reducer和chapterList的reducer
 import { subjectList } from '@pages/Edu/Subject/redux'
+import { chapterList } from '@pages/Edu/Chapter/redux'
 
 export default combineReducers({
   loading,
@@ -17,5 +18,6 @@ export default combineReducers({
   userList,
   roleList,
   menuList,
-  subjectList
+  subjectList,
+  chapterList
 })
