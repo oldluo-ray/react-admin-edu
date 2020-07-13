@@ -1,8 +1,13 @@
 import React, { Component } from 'react'
 // 导入antd组件
-import { Button, Table, Tooltip, Input, message } from 'antd'
+import { Button, Table, Tooltip, Input, message, Modal } from 'antd'
 // 导入antd-图标
-import { PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons'
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  FormOutlined,
+  ExclamationCircleOutlined
+} from '@ant-design/icons'
 
 // 导入connect
 import { connect } from 'react-redux'
@@ -11,10 +16,20 @@ import { connect } from 'react-redux'
 // import { reqGetSubjectList } from '@api/edu/subject'
 
 // 导入redux中的异步anction
-import { getSubjectList, getSecSubjectList, updateSubject } from './redux'
+import {
+  getSubjectList,
+  getSecSubjectList,
+  updateSubject,
+  subjectList
+} from './redux'
+
+// 导入删除课程分类数据的方法
+import { reqDelSubject } from '@api/edu/subject'
 
 //导入样式文件
 import './index.less'
+
+const { confirm } = Modal
 
 // {subjectList: {total:0, items: []}}
 @connect(
@@ -25,6 +40,7 @@ import './index.less'
 class Subject extends Component {
   // 直接给当前组件实例,添加currentPage属性,表示当前是第几页
   currentPage = 1
+  pageSize = 10
 
   state = {
     // subjectId的作用:
@@ -67,6 +83,7 @@ class Subject extends Component {
     this.props.getSubjectList(current, size)
     // 动态给currentPage赋值,保证当前高亮的页码和实际获取的页码数据保持一致
     this.currentPage = current
+    this.pageSize = size
   }
 
   // 点击跳转到添加课程分类中
@@ -146,6 +163,55 @@ class Subject extends Component {
     this.handleCancle()
   }
 
+  handleDel = value => () => {
+    confirm({
+      title: (
+        <>
+          <div>
+            确定要删除
+            <span style={{ color: 'red', fontSize: 30 }}>{value.title}</span>
+            嘛?
+          </div>
+        </>
+      ),
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        // 真正去删除这条数据
+        await reqDelSubject(value._id)
+        message.success('删除成功了')
+
+        // 重新请求获取最新的数据
+        //如果当前页是最后一页,并且最后一页只有一条数据, 并且当前不是第一页,那么请求新数据的时候,应该请求的是上一页的数据
+
+        // 1.如何判断当前是否是第一页 this.currentPage !== 1
+        // 2. 如何判断当前页只剩下一条数据
+        //   说明: 由于没有修改redux.所以redux中如果items.length为1,证明只有一条数据
+        // 3. 如果判断是最后一页
+        //  subjectList.total 表示所有数据
+        //  currentPage 表示 当前页
+        // pageSize 表示 一页多少条
+
+        const totalPage = Math.ceil(
+          this.props.subjectList.total / this.pageSize
+        )
+        // 如果totalPage === currentPage 表示最后一页
+        // console.log('currentPage', this.currentPage)
+        // console.log('当前数据长度', this.props.subjectList.items.length)
+        // console.log('totalpage', totalPage)
+        if (
+          this.currentPage !== 1 &&
+          this.props.subjectList.items.length === 1 &&
+          totalPage === this.currentPage
+        ) {
+          // console.log('请求上一页数据了')
+          this.props.getSubjectList(--this.currentPage, this.pageSize)
+          return
+        }
+        this.props.getSubjectList(this.currentPage, this.pageSize)
+      }
+    })
+  }
+
   render() {
     // 注意:这个columns必须写到render中,因为state变化,render会调用.这个columns才会重新执行
     const columns = [
@@ -211,7 +277,7 @@ class Subject extends Component {
                 </Button>
               </Tooltip>
               <Tooltip title='删除课程分类'>
-                <Button type='danger'>
+                <Button type='danger' onClick={this.handleDel(value)}>
                   <DeleteOutlined />
                 </Button>
               </Tooltip>
