@@ -15,7 +15,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { connect } from 'react-redux'
 import SearchForm from './SearchForm'
-
+import { getLessonList } from './redux'
 import './index.less'
 
 dayjs.extend(relativeTime)
@@ -28,7 +28,8 @@ dayjs.extend(relativeTime)
     //   "Course"
     // )
     chapterList: state.chapterList
-  })
+  }),
+  { getLessonList }
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -89,6 +90,16 @@ class Chapter extends Component {
     this.setState({
       selectedRowKeys
     })
+  }
+
+  // handleClickExpand ray 定义的点击展开按钮的事件处理函数
+  handleClickExpand = (expand, record) => {
+    console.log(expand, record)
+    // console.log(expand)
+    if (expand) {
+      // 发送请求获取数据
+      this.props.getLessonList(record._id)
+    }
   }
 
   render() {
@@ -292,7 +303,10 @@ class Chapter extends Component {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={this.props.chapterList.items}
-            rowKey='id'
+            rowKey='_id'
+            expandable={{
+              onExpand: this.handleClickExpand
+            }}
           />
         </div>
 
