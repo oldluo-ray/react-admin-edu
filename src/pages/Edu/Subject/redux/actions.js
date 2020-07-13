@@ -50,9 +50,14 @@ const updateSubjectSync = data => ({
 export const updateSubject = (title, id) => {
   return dispatch => {
     // 实现异步操作
-    reqUpdateSubjectList(title, id).then(res => {
+
+    //这个return 是为了返回promise对象
+    return reqUpdateSubjectList(title, id).then(res => {
+      console.log('请求成功了')
       // 将redux里面的数据修改完成
       dispatch(updateSubjectSync({ title, id }))
+      // 这个return 是为了让promise拿到响应的值
+      return res
     })
   }
 }

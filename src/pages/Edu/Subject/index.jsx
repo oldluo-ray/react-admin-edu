@@ -97,13 +97,16 @@ class Subject extends Component {
         subjectId: value._id,
         subjectTitle: value.title
       })
+
+      // 存储一下老的subjectTitle
+      this.oldSubjectTitle = value.title
     }
   }
 
   // 修改数据时,受控组件input的change回调函数
   handleTitleChange = e => {
     this.setState({
-      subjectTitle: e.target.value
+      subjectTitle: e.target.value.trim()
     })
   }
 
@@ -116,16 +119,33 @@ class Subject extends Component {
   }
 
   // 更新确认按钮的事件处理函数
-  handleUpdate = () => {
+  handleUpdate = async () => {
     let { subjectId, subjectTitle } = this.state
 
-    this.props.updateSubject(subjectTitle, subjectId)
+    // 优化
+    // 1. 如果用户输入的是空字符串,就不执行后面操作
+    if (subjectTitle.length === 0) {
+      message.error('课程分类名称不能为空')
+      return
+    }
+
+    // 2. 如果用户输入的内容和原来的内容相同,则不执行后面的操作
+    // 思路: 点击更新按钮的时候,把旧的课程分类名称存起来,点确认的时候,用新数据(subjectTitle)和老数据进行比较
+    if (this.oldSubjectTitle === subjectTitle) {
+      message.error('课程分类名称不能和之前的相同')
+      return
+    }
+
+    // 在异步操作之前加一个awit 就可以让异步执行完毕之后,再执行后面的代码
+    // await this.props.updateSubject(subjectTitle, subjectId)
+    await this.props.updateSubject(subjectTitle, subjectId)
 
     message.success('更改成功')
 
     // 手动调用取消按钮的事件处理函数,让表格行展示内容
     this.handleCancle()
   }
+
   render() {
     // 注意:这个columns必须写到render中,因为state变化,render会调用.这个columns才会重新执行
     const columns = [
