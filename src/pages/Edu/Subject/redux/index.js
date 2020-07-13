@@ -1,4 +1,4 @@
 import subjectList from './reducers'
-import { getSubjectList, getSecSubjectList } from './actions'
+import { getSubjectList, getSecSubjectList,updateSubject } from './actions'
 
-export { subjectList, getSubjectList, getSecSubjectList }
+export { subjectList, getSubjectList, getSecSubjectList,updateSubject }

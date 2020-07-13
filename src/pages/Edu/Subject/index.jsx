@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // 导入antd组件
-import { Button, Table, Tooltip, Input } from 'antd'
+import { Button, Table, Tooltip, Input, message } from 'antd'
 // 导入antd-图标
 import { PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons'
 
@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 // import { reqGetSubjectList } from '@api/edu/subject'
 
 // 导入redux中的异步anction
-import { getSubjectList, getSecSubjectList } from './redux'
+import { getSubjectList, getSecSubjectList, updateSubject } from './redux'
 
 //导入样式文件
 import './index.less'
@@ -20,7 +20,7 @@ import './index.less'
 @connect(
   state => ({ subjectList: state.subjectList }),
   // 这里传入的是一个异步action.但是在展示组件中使用的函数,是通过connect进行封装之后的,虽然函数名一样,但是并不是同一个函数
-  { getSubjectList, getSecSubjectList }
+  { getSubjectList, getSecSubjectList, updateSubject }
 )
 class Subject extends Component {
   // 直接给当前组件实例,添加currentPage属性,表示当前是第几页
@@ -106,6 +106,26 @@ class Subject extends Component {
       subjectTitle: e.target.value
     })
   }
+
+  // 取消按钮的事件处理函数
+  handleCancle = () => {
+    this.setState({
+      subjectId: '',
+      subjectTitle: ''
+    })
+  }
+
+  // 更新确认按钮的事件处理函数
+  handleUpdate = () => {
+    let { subjectId, subjectTitle } = this.state
+
+    this.props.updateSubject(subjectTitle, subjectId)
+
+    message.success('更改成功')
+
+    // 手动调用取消按钮的事件处理函数,让表格行展示内容
+    this.handleCancle()
+  }
   render() {
     // 注意:这个columns必须写到render中,因为state变化,render会调用.这个columns才会重新执行
     const columns = [
@@ -145,10 +165,16 @@ class Subject extends Component {
           if (this.state.subjectId === value._id) {
             return (
               <>
-                <Button type='primary' className='update-btn'>
+                <Button
+                  type='primary'
+                  className='update-btn'
+                  onClick={this.handleUpdate}
+                >
                   确认
                 </Button>
-                <Button type='danger'>取消</Button>
+                <Button type='danger' onClick={this.handleCancle}>
+                  取消
+                </Button>
               </>
             )
           }

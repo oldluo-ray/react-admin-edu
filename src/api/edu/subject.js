@@ -43,3 +43,16 @@ export function reqAddSubjectList(title, parentId) {
     }
   })
 }
+
+// 定义修改课程分类title的方法
+export function reqUpdateSubjectList(title, id) {
+  // request返回一个promise
+  return request({
+    url: `${BASE_URL}/update`,
+    method: 'PUT',
+    data: {
+      title,
+      id
+    }
+  })
+}
