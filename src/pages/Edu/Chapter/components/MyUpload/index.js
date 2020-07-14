@@ -5,7 +5,10 @@ import { UploadOutlined } from '@ant-design/icons'
 
 import { reqGetQiniuToken } from '@api/edu/lesson'
 
-const MAX_VIDEO_SIZE = 2 * 1024 * 1024
+import * as qiniu from 'qiniu-js'
+import { nanoid } from 'nanoid'
+
+const MAX_VIDEO_SIZE = 20 * 1024 * 1024
 export default class MyUpload extends Component {
   // 定义构造函数
   // 构造函数中只是从缓存中获取数据/定义状态
@@ -107,7 +110,10 @@ export default class MyUpload extends Component {
     // 注意: expires 是秒数,并且是过期时间的周期值 7200只表示两个小时
     // 所以需要使用expires 换算一个过期的时间
     // 获取到token的时间 加上 时间周期 得到过期的目标时间
-    const targetTime = Date.now() + expires * 1000
+    // 注意: 七牛云创建token, 就已经开始计时. 当浏览器得到token的时候,可能时间已经过去很久了
+    // 所以在计算目标过期时间的时候,要把刚才那段时间考虑进来
+    // 实现: 在计算出来的目标时间的基础上,减去一段
+    const targetTime = Date.now() + expires * 1000 - 2 * 60 * 1000
     expires = targetTime
     const upload_token = JSON.stringify({ uploadToken, expires })
     localStorage.setItem('upload_token', upload_token)
@@ -119,9 +125,51 @@ export default class MyUpload extends Component {
   }
 
   // 真正上传视频时调用, 这个函数会覆盖默认的上传方式
-  handleCustomRequest = () => {
-    console.log('上传了')
-    console.log(this.state.uploadToken)
+  handleCustomRequest = value => {
+    // console.log(value, value1)
+    // console.log('上传了')
+    // console.log(this.state.uploadToken)
+    // 要上传的文件对象
+    const file = value.file
+
+    // key 新定义的文件名   尽可能不要重新
+    const key = nanoid(10)
+
+    // token 就是七牛云返回的token
+    const token = this.state.uploadToken
+
+    // putExtra 上传的额外配置项  可以配置上传文件的类型
+    // 可以上传所有格式的视频
+    // 后台限制上传文件的类型,不是视频,就不能上传成功
+    const putExtra = {
+      mimeType: 'video/*'
+    }
+
+    // config 配置项  可以控制上传到哪个区域
+    const config = {
+      region: qiniu.region.z2
+    }
+
+    const observable = qiniu.upload(file, key, token, putExtra, config)
+
+    const observer = {
+      next(res) {
+        // ...
+      },
+      error(err) {
+        // ...
+      },
+      complete(res) {
+        // ...
+      }
+    }
+
+    this.subscription = observable.subscribe(observer) // 上传开始
+  }
+
+  // 如果组件卸载,上传取消
+  componentWillUnmount() {
+    this.subscription.unsubscribe() // 上传取消
   }
 
   render() {
@@ -130,6 +178,8 @@ export default class MyUpload extends Component {
         <Upload
           beforeUpload={this.handleBeforeUpload}
           customRequest={this.handleCustomRequest}
+          // 前端控制上传视频的类型, 不是视频文件,就看不到
+          accept='video/*'
         >
           <Button>
             <UploadOutlined /> 上传视频

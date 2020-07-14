@@ -1079,6 +1079,14 @@
     "@babel/helper-plugin-utils" "^7.8.3"
     "@babel/plugin-transform-typescript" "^7.8.3"
 
+"@babel/runtime-corejs2@^7.10.2":
+  version "7.10.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs2/-/runtime-corejs2-7.10.4.tgz#5d48ee239624d511c88208da86c27a161ee01cf7"
+  integrity sha512-9sArmpZDQsnR1yyAcU51DxQrntWxt0LUKjPp3pIyo7kVLfaqKt8muppcT87QmFkXV5H50qXAF8JWOjk0jaXRYA==
+  dependencies:
+    core-js "^2.6.5"
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime-corejs3@^7.7.4":
   version "7.8.7"
   resolved "https://registry.npm.taobao.org/@babel/runtime-corejs3/download/@babel/runtime-corejs3-7.8.7.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fruntime-corejs3%2Fdownload%2F%40babel%2Fruntime-corejs3-7.8.7.tgz#8209d9dff2f33aa2616cb319c83fe159ffb07b8c"
@@ -3404,7 +3412,7 @@ core-js-pure@^3.0.0:
   resolved "https://registry.npm.taobao.org/core-js-pure/download/core-js-pure-3.6.4.tgz#4bf1ba866e25814f149d4e9aaa08c36173506e3a"
   integrity sha1-S/G6hm4lgU8UnU6aqgjDYXNQbjo=
 
-core-js@^2.4.0:
+core-js@^2.4.0, core-js@^2.6.5:
   version "2.6.11"
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-2.6.11.tgz?cache=0&sync_timestamp=1578957006406&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcore-js%2Fdownload%2Fcore-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha1-OIMUafmSK97Y7iHJ3EaYXgOZMIw=
@@ -4684,6 +4692,11 @@ execa@^1.0.0:
     p-finally "^1.0.0"
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
+
+exif-js@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/exif-js/-/exif-js-2.3.0.tgz#9d10819bf571f873813e7640241255ab9ce1a814"
+  integrity sha1-nRCBm/Vx+HOBPnZAJBJVq5zhqBQ=
 
 exit@^0.1.2:
   version "0.1.2"
@@ -7498,6 +7511,11 @@ nan@^2.12.1:
   resolved "https://registry.npm.taobao.org/nan/download/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha1-eBj3IgJ7JFmobwKV1DTR/CM2xSw=
 
+nanoid@^3.1.10:
+  version "3.1.10"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.10.tgz#69a8a52b77892de0d11cede96bc9762852145bc4"
+  integrity sha512-iZFMXKeXWkxzlfmMfM91gw7YhN2sdJtixY+eZh9V6QWJWTOiurhpKhBMgr82pfzgSqglQgqYSCowEYsz8D++6w==
+
 nanomatch@^1.2.9:
   version "1.2.13"
   resolved "https://registry.npm.taobao.org/nanomatch/download/nanomatch-1.2.13.tgz#b87a8aa4fc0de8fe6be88895b38983ff265bd119"
@@ -9129,6 +9147,15 @@ q@^1.1.2:
   resolved "https://registry.npm.taobao.org/q/download/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
+qiniu-js@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/qiniu-js/-/qiniu-js-3.0.3.tgz#632f8b378dba531b4fad72e1ea65a51e64159399"
+  integrity sha512-tyNIvcu615r0eZYkt0wntmOXHA+pp+Rblf6QfWZJOzXcsSHmHro4/sDc/8ciVJqrH1rR6EsFXV0cWCiEemSysQ==
+  dependencies:
+    "@babel/runtime-corejs2" "^7.10.2"
+    exif-js "^2.3.0"
+    spark-md5 "^3.0.0"
+
 qs@6.7.0:
   version "6.7.0"
   resolved "https://registry.npm.taobao.org/qs/download/qs-6.7.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fqs%2Fdownload%2Fqs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
@@ -10651,6 +10678,11 @@ source-map@^0.5.0, source-map@^0.5.6, source-map@~0.5.1:
   version "0.5.7"
   resolved "https://registry.npm.taobao.org/source-map/download/source-map-0.5.7.tgz?cache=0&sync_timestamp=1571657176668&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fsource-map%2Fdownload%2Fsource-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
+
+spark-md5@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/spark-md5/-/spark-md5-3.0.1.tgz#83a0e255734f2ab4e5c466e5a2cfc9ba2aa2124d"
+  integrity sha512-0tF3AGSD1ppQeuffsLDIOWlKUd3lS92tFxcsrh5Pe3ZphhnoK+oXIBTzOAThZCiuINZLvpiLH/1VS1/ANEJVig==
 
 spdx-correct@^3.0.0:
   version "3.1.0"
