@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom'
 import { Card, Button, Form, Input, Switch, message, Upload } from 'antd'
 import { ArrowLeftOutlined, UploadOutlined } from '@ant-design/icons'
 
+import MyUpload from '../MyUpload'
+
 // 导入样式
 import './index.less'
 
@@ -104,11 +106,8 @@ class AddLesson extends Component {
               }
             ]}
           >
-            <Upload>
-              <Button>
-                <UploadOutlined /> 上传视频
-              </Button>
-            </Upload>
+            {/* 上传逻辑复杂,所以封装到MyUpload中 */}
+            <MyUpload></MyUpload>
           </Form.Item>
 
           <Form.Item>
