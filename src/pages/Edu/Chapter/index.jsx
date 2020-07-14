@@ -103,8 +103,8 @@ class Chapter extends Component {
   }
 
   // 点击跳转到新增课时页面
-  handleGoAddLesson = () => {
-    this.props.history.push('/edu/chapter/addlesson')
+  handleGoAddLesson = data => () => {
+    this.props.history.push('/edu/chapter/addlesson',data)
   }
 
   render() {
@@ -131,7 +131,7 @@ class Chapter extends Component {
           return (
             <div>
               <Tooltip title='新增课时'>
-                <Button type='primary' onClick={this.handleGoAddLesson}>
+                <Button type='primary' onClick={this.handleGoAddLesson(data)}>
                   <PlusOutlined />
                 </Button>
               </Tooltip>

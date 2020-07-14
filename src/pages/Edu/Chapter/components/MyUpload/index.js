@@ -127,6 +127,7 @@ export default class MyUpload extends Component {
   // 真正上传视频时调用, 这个函数会覆盖默认的上传方式
   handleCustomRequest = value => {
     // console.log(value, value1)
+    console.log(value)
     // console.log('上传了')
     // console.log(this.state.uploadToken)
     // 要上传的文件对象
@@ -154,13 +155,28 @@ export default class MyUpload extends Component {
 
     const observer = {
       next(res) {
-        // ...
+        console.log(res)
+        // 由于res.total是一个对象,并且又percent属性.所以可以展示进度条
+        value.onProgress(res.total)
       },
       error(err) {
         // ...
+        console.log(err)
+        // 上传失败,调用onError, 会展示一个错误的样式
+        value.onError(err)
       },
-      complete(res) {
+      complete: res => {
         // ...
+        console.log(res)
+        // 上传成功会调用. 展示一个上传成功的样式
+        value.onSuccess(res)
+        // 注意:解决视频上传成功,表单验证不通过的问题
+        // 手动调用Form.Item传过来onChange方法,onChange方法中传入需要表单控制的数据
+        // 未来要给本地服务器存储的实际上就是 上传视频成功的地址
+        // 地址: 自己七牛云空间的域名 + 文件名
+        this.props.onChange('http://qdcdb1qpp.bkt.clouddn.com/' + res.key)
+
+        // console.log()
       }
     }
 
@@ -169,7 +185,8 @@ export default class MyUpload extends Component {
 
   // 如果组件卸载,上传取消
   componentWillUnmount() {
-    this.subscription.unsubscribe() // 上传取消
+    // console.log(this)
+    this.subscription && this.subscription.unsubscribe() // 上传取消
   }
 
   render() {
