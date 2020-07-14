@@ -50,6 +50,12 @@ class AddLesson extends Component {
           onFinish={this.onFinish}
           // 提交失败的时候会触发
           // onFinishFailed={onFinishFailed}
+
+          initialValues={{
+            // 键就是表单项的name属性的值
+            lesson: '哈哈',
+            free: true
+          }}
         >
           {/* form表单中每一个表单项都需要使用Form.Item包裹 */}
           <Form.Item
@@ -78,6 +84,8 @@ class AddLesson extends Component {
                 message: '请选择是否免费'
               }
             ]}
+            // 默认表单控制表单项的属性值是value,但是switch的值不是value,是checked,所以要改成checked
+            valuePropName='checked'
           >
             <Switch
               checkedChildren='开启'
