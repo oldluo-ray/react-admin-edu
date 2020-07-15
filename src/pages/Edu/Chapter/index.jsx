@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 import Player from 'griffith'
 
 import SearchForm from './SearchForm'
-import { getLessonList, chapterList } from './redux'
+import { getLessonList, chapterList, batchDelChapter } from './redux'
 import './index.less'
 
 dayjs.extend(relativeTime)
@@ -32,7 +32,7 @@ dayjs.extend(relativeTime)
     // )
     chapterList: state.chapterList
   }),
-  { getLessonList }
+  { getLessonList, batchDelChapter }
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -150,8 +150,15 @@ class Chapter extends Component {
           }
         })
 
-        console.log(chapterIds)
-        console.log(selectedRowKeys)
+        lessonIds = [...selectedRowKeys]
+
+        // console.log(chapterIds)
+        // console.log(selectedRowKeys)
+
+        // 需要定义异步接口, 定义redux里面的代码
+
+        //调用异步action,删除章节
+        this.props.batchDelChapter(chapterIds)
       }
     })
   }

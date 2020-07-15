@@ -1,4 +1,10 @@
-import { GET_CHAPTER_LIST, GET_LESSON_LIST } from './constant'
+import {
+  GET_CHAPTER_LIST,
+  GET_LESSON_LIST,
+  BATCH_DEL_CHAPTER,
+  BATCH_DEL_LESSON
+} from './constant'
+import Chapter from '..'
 
 const initChapterList = {
   total: 0,
@@ -27,6 +33,26 @@ export default function chapterList(prevState = initChapterList, action) {
       }
       return {
         ...prevState
+      }
+
+    case BATCH_DEL_CHAPTER:
+      // 删除指定的章节数据
+      // 1. 需要知道删除哪些 action.data 就是要删除的章节的ids(数组)
+      const chapterIds = action.data
+      // 2. 遍历章节数据,删除在ids中的数据
+      const newChapters = prevState.items.filter(chapter => {
+        // 如果当前的chapter的id 在 chapterIds中,表示这条数据要删除.就应该返回false
+        if (chapterIds.indexOf(chapter._id) > -1) {
+          // 要删除的数中,包含这一条数据
+          return false
+        }
+
+        return true
+      })
+
+      return {
+        ...prevState,
+        items: newChapters
       }
     default:
       return prevState
