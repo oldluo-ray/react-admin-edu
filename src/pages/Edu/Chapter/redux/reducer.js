@@ -54,6 +54,31 @@ export default function chapterList(prevState = initChapterList, action) {
         ...prevState,
         items: newChapters
       }
+
+    case BATCH_DEL_LESSON:
+      // 所有的课时数据是存储在对应章节的children属性里面
+      // 1. 先获取到所有要删除的课时的ids
+      let lessonIds = action.data
+      // 2. 遍历章节,找到章节之后,遍历章节的课时
+      let chapterList = prevState.items
+      // 遍历章节
+      chapterList.forEach(chapter => {
+        // 拿到章节之后,要遍历章节的children
+        // 遍历children的同时,如果找到要删除的数据,就要把这个数据删除掉
+        const newChildren = chapter.children.filter(lesson => {
+          if (lessonIds.indexOf(lesson._id) > -1) {
+            return false
+          }
+          return true
+        })
+
+        // 给chapter的children属性重新赋值
+        chapter.children = newChildren
+      })
+      return {
+        ...prevState,
+        items: chapterList
+      }
     default:
       return prevState
   }
