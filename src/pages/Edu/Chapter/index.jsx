@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 import Player from 'griffith'
 
 import SearchForm from './SearchForm'
-import { getLessonList } from './redux'
+import { getLessonList, chapterList } from './redux'
 import './index.less'
 
 dayjs.extend(relativeTime)
@@ -90,6 +90,11 @@ class Chapter extends Component {
   }
 
   onSelectChange = selectedRowKeys => {
+    // 注意: selectedRowKeys 拿到的是选中项的_id
+    // 对应那一行数据有很多,为什么直接拿的是_id
+    // 因为table内部其实拿的是每一行数据key的值,只是我们之前指定了key的值就是数据_id的值
+    // 所以在这里拿到的是每一行数据_id
+    console.log(selectedRowKeys)
     this.setState({
       selectedRowKeys
     })
@@ -108,6 +113,47 @@ class Chapter extends Component {
   // 点击跳转到新增课时页面
   handleGoAddLesson = data => () => {
     this.props.history.push('/edu/chapter/addlesson', data)
+  }
+
+  // 批量删除按钮的事件处理函数
+  handleBatchDel = () => {
+    Modal.confirm({
+      title: '确定要批量删除吗?',
+      onOk: () => {
+        // selectedRowKeys 里面存储的是所有选中的课时和章节
+        // 所以在批量删除之前,要先分清楚哪些是课时的id, 哪些是章节的id
+        let chapterIds = [] //存储选中章节id
+        let lessonIds = [] // 存储选中课时id
+
+        // 拿到所有的选中的id
+        let selectedRowKeys = this.state.selectedRowKeys
+        // 从selectedRowKeys里面找到章节id,其他的就是课时id
+        // 所有的章节数据,都存储在redux里面,拿到章节数据,然后遍历章节数据,判断selectedRowKeys里面哪些是章节的id.把这些id取出来,其他就是课时id
+        let chapterList = this.props.chapterList.items
+
+        // 遍历查找章节id
+        // 遍历chapterList, 拿到每一个章节id. 去selectedRowKeys里面查找是否存在
+        chapterList.forEach(chapter => {
+          // 找到每一条章节的id
+          let chapterId = chapter._id
+
+          // 拿这条章节id,去selectedRowKeys里面找,看看是否存储,如果存在就取出来
+          // 如果selectedRowKeys里面有chapterId,就返回这个id对应的下标,否则返回-1
+          let index = selectedRowKeys.indexOf(chapterId)
+          if (index > -1) {
+            //证明找到了,就从selectedRowKeys把这条数据切出来
+            // selectedRowKeys.splice(开始的下标, 切几条)
+            // splice会修改原来的数据,并且返回切割的新的数组
+            let newArr = selectedRowKeys.splice(index, 1)
+            // chapterIds = [...selectedRowKeys.splice(index, 1), ...chapterIds]
+            chapterIds.push(newArr[0])
+          }
+        })
+
+        console.log(chapterIds)
+        console.log(selectedRowKeys)
+      }
+    })
   }
 
   render() {
@@ -205,6 +251,7 @@ class Chapter extends Component {
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange
+      //#region
       // hideDefaultSelections: true,
       // selections: [
       //   Table.SELECTION_ALL,
@@ -238,6 +285,7 @@ class Chapter extends Component {
       //     }
       //   }
       // ]
+      //#endregion
     }
 
     return (
@@ -253,7 +301,11 @@ class Chapter extends Component {
                 <PlusOutlined />
                 <span>新增</span>
               </Button>
-              <Button type='danger' style={{ marginRight: 10 }}>
+              <Button
+                type='danger'
+                style={{ marginRight: 10 }}
+                onClick={this.handleBatchDel}
+              >
                 <span>批量删除</span>
               </Button>
               <Tooltip title='全屏' className='course-table-btn'>
@@ -296,7 +348,7 @@ class Chapter extends Component {
           // 点击modal的关闭按钮,触发这个函数
           onCancel={this.handleImgModal}
           footer={null}
-          destroyOnClose={true}
+          destroyOnClose={true} //关闭modal销毁modal子元素
         >
           <Player
             sources={sources} // 必须有,定义预览视频的路径, 多个视频源
