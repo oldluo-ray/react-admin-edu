@@ -12,6 +12,7 @@
     "bizcharts": "^3.5.8",
     "bizcharts-plugin-slider": "^3.0.1",
     "dayjs": "^1.8.23",
+    "griffith": "^1.5.3",
     "mockjs": "^1.1.0",
     "nanoid": "^3.1.10",
     "nprogress": "^0.2.0",

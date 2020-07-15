@@ -14,6 +14,9 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { connect } from 'react-redux'
+// 导入知乎提供的视频播放组件
+import Player from 'griffith'
+
 import SearchForm from './SearchForm'
 import { getLessonList } from './redux'
 import './index.less'
@@ -35,18 +38,18 @@ dayjs.extend(relativeTime)
 class Chapter extends Component {
   state = {
     searchLoading: false,
-    previewVisible: false,
+    previewVisible: false, //控制modal窗口是否展示
     previewImage: '',
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    video: ''
   }
 
-  showImgModal = img => {
-    return () => {
-      this.setState({
-        previewVisible: true,
-        previewImage: img
-      })
-    }
+  // video就是要预览的视频的路径
+  showModal = video => () => {
+    this.setState({
+      previewVisible: true,
+      video
+    })
   }
 
   handleImgModal = () => {
@@ -138,7 +141,7 @@ class Chapter extends Component {
           // 章节数据没有free属性, 什么都不展示
           // 如果课时的free是false, 也返回undefined. 符合项目业务逻辑
           if (!value.free) return
-          return <Button>预览</Button>
+          return <Button onClick={this.showModal(value.video)}>预览</Button>
 
           // return isFree === true ? '是' : isFree === false ? '否' : ''
         }
@@ -183,80 +186,21 @@ class Chapter extends Component {
       }
     ]
 
-    const data = [
-      {
-        id: '111',
-        title: '第一章节',
-        children: [
-          {
-            id: '1',
-            title: '第一课时',
-            free: false,
-            videoSourceId: '756cf06db9cb4f30be85a9758b19c645'
-          },
-          {
-            id: '2',
-            title: '第二课时',
-            free: true,
-            videoSourceId: '2a02d726622f4c7089d44cb993c531e1'
-          },
-          {
-            id: '3',
-            title: '第三课时',
-            free: true,
-            videoSourceId: '4e560c892fdf4fa2b42e0671aa42fa9d'
-          }
-        ]
-      },
-      {
-        id: '222',
-        title: '第二章节',
-        children: [
-          {
-            id: '4',
-            title: '第一课时',
-            free: false,
-            videoSourceId: '756cf06db9cb4f30be85a9758b19c645'
-          },
-          {
-            id: '5',
-            title: '第二课时',
-            free: true,
-            videoSourceId: '2a02d726622f4c7089d44cb993c531e1'
-          },
-          {
-            id: '6',
-            title: '第三课时',
-            free: true,
-            videoSourceId: '4e560c892fdf4fa2b42e0671aa42fa9d'
-          }
-        ]
-      },
-      {
-        id: '333',
-        title: '第三章节',
-        children: [
-          {
-            id: '1192252824606289921',
-            title: '第一课时',
-            free: false,
-            videoSourceId: '756cf06db9cb4f30be85a9758b19c645'
-          },
-          {
-            id: '1192628092797730818',
-            title: '第二课时',
-            free: true,
-            videoSourceId: '2a02d726622f4c7089d44cb993c531e1'
-          },
-          {
-            id: '1192632495013380097',
-            title: '第三课时',
-            free: true,
-            videoSourceId: '4e560c892fdf4fa2b42e0671aa42fa9d'
-          }
-        ]
+    const sources = {
+      hd: {
+        play_url: this.state.video, //真正需要的属性 , 预览视频的路径
+        // 下面这些属性,其实不写也可以,但是会提示这个必须属性,所以为了不展示错误提示,加了这些属性,值随便写就可以
+        bitrate: 1,
+        duration: 1000,
+        format: '',
+        height: 500,
+        size: 160000,
+        width: 500
       }
-    ]
+      // sd: {
+      //   // play_url:
+      // }
+    }
 
     const rowSelection = {
       selectedRowKeys,
@@ -345,13 +289,21 @@ class Chapter extends Component {
             }}
           />
         </div>
-
+        {/* antd中对话框组件, 预览功能就是要在modal中实现预览视频 */}
         <Modal
+          title='视频'
           visible={previewVisible}
-          footer={null}
+          // 点击modal的关闭按钮,触发这个函数
           onCancel={this.handleImgModal}
+          footer={null}
+          destroyOnClose={true}
         >
-          <img alt='example' style={{ width: '100%' }} src={previewImage} />
+          <Player
+            sources={sources} // 必须有,定义预览视频的路径, 多个视频源
+            id={'1'}
+            cover={'http://localhost:3000/logo512.png'} //视频封面
+            duration={1000}
+          ></Player>
         </Modal>
       </div>
     )
