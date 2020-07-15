@@ -104,7 +104,7 @@ class Chapter extends Component {
 
   // 点击跳转到新增课时页面
   handleGoAddLesson = data => () => {
-    this.props.history.push('/edu/chapter/addlesson',data)
+    this.props.history.push('/edu/chapter/addlesson', data)
   }
 
   render() {
@@ -118,8 +118,29 @@ class Chapter extends Component {
       {
         title: '是否免费',
         dataIndex: 'free',
+        // 注意: 如果没有写dataIndex,render函数接收到的就是这一行数据(应该是一个对象)
+        // 如果dataIndex写了值,那么render函数接收到的就是这一行数据中对应的dataIndex中那个属性的值
         render: isFree => {
+          // console.log(isFree)
+          // 这行代码实现了,章节不展示是否免费, 只有课时才展示
           return isFree === true ? '是' : isFree === false ? '否' : ''
+        }
+      },
+
+      {
+        title: '视频',
+        // dataIndex: 'free',
+        // 注意: 如果没有写dataIndex,render函数接收到的就是这一行数据(应该是一个对象)
+        // 如果dataIndex写了值,那么render函数接收到的就是这一行数据中对应的dataIndex中那个属性的值
+        render: value => {
+          // 如果是章节数据,不展示任何内容
+          // 如果是课时数据,判断是否是免费,如果是免费就展示预览按钮
+          // 章节数据没有free属性, 什么都不展示
+          // 如果课时的free是false, 也返回undefined. 符合项目业务逻辑
+          if (!value.free) return
+          return <Button>预览</Button>
+
+          // return isFree === true ? '是' : isFree === false ? '否' : ''
         }
       },
       {
@@ -127,20 +148,30 @@ class Chapter extends Component {
         width: 300,
         fixed: 'right',
         render: data => {
-          // if ('free' in data) {
+          // 如果是章节,章节数据中没有free属性,课时数据中有
           return (
             <div>
-              <Tooltip title='新增课时'>
-                <Button type='primary' onClick={this.handleGoAddLesson(data)}>
-                  <PlusOutlined />
-                </Button>
-              </Tooltip>
-              <Tooltip title='更新章节'>
-                <Button type='primary' style={{ margin: '0 10px' }}>
+              {data.free === undefined && (
+                <Tooltip title='新增课时'>
+                  <Button
+                    type='primary'
+                    style={{ marginRight: 10 }}
+                    onClick={this.handleGoAddLesson(data)}
+                  >
+                    <PlusOutlined />
+                  </Button>
+                </Tooltip>
+              )}
+              <Tooltip
+                title={data.free === undefined ? '更新章节' : '更新课时'}
+              >
+                <Button type='primary' style={{ marginRight: 10 }}>
                   <FormOutlined />
                 </Button>
               </Tooltip>
-              <Tooltip title='删除章节'>
+              <Tooltip
+                title={data.free === undefined ? '删除章节' : '删除课时'}
+              >
                 <Button type='danger'>
                   <DeleteOutlined />
                 </Button>
