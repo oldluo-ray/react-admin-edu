@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Select, Cascader, Button } from 'antd'
+import { Form, Input, Select, Cascader, Button, message } from 'antd'
+import { connect } from 'react-redux'
 
 // 导入获取所有讲师的方法
 import { reqGetAllTeacherList } from '@api/edu/teacher'
 import { reqALLSubjectList, reqGetSecSubjectList } from '@api/edu/subject'
+import { getCourseList } from '../redux'
 
 import './index.less'
 
 const { Option } = Select
 
-function SearchForm() {
+function SearchForm(props) {
   const [form] = Form.useForm()
   // 定义存储讲师列表的状态
   const [teacherList, setTeacherList] = useState([])
@@ -136,8 +138,8 @@ function SearchForm() {
   }
 
   // 点击查询按钮的事件处理函数
-  const finish = value => {
-    console.log(value)
+  const finish = async value => {
+    // console.log(value)
     /**
      * subject: (2) ["5ee171adc311f5151c52332a", "5ee17310c311f5151c523334"]
        teacherId: "5ee1ebc844086831e4a48eca"
@@ -164,6 +166,34 @@ function SearchForm() {
        subjectId 就是 subject[1]
        subjectParentId 就是 subject[0]
      */
+
+    // 有可能subject没选,就是undefined
+    let subjectId
+    let subjectParentId
+    if (value.subject && value.subject.length > 1) {
+      // 有一级和二级
+      subjectId = value.subject[1]
+      subjectParentId = value.subject[0]
+    }
+
+    if (value.subject && value.subject.length === 1) {
+      // 有一级和二级
+      subjectId = value.subject[0]
+      subjectParentId = 0
+    }
+
+    // 请求接口,获取课程分页数据
+    const data = {
+      page: 1,
+      limit: 5,
+      title: value.title,
+      teacherId: value.teacherId,
+      subjectId,
+      subjectParentId
+    }
+    await props.getCourseList(data)
+    //提示
+    message.success('课程数据获取成功')
   }
 
   return (
@@ -211,4 +241,7 @@ function SearchForm() {
   )
 }
 
-export default SearchForm
+export default connect(
+  null,
+  { getCourseList }
+)(SearchForm)
