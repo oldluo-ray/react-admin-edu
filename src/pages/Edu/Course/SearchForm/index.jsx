@@ -7,11 +7,17 @@ import { reqGetAllTeacherList } from '@api/edu/teacher'
 import { reqALLSubjectList, reqGetSecSubjectList } from '@api/edu/subject'
 import { getCourseList } from '../redux'
 
+// 导入实现国际化的包
+// 页面中不是所有都支持FormattedMessage组件,不支持的地方可以使用useIntl钩子函数
+import { FormattedMessage, useIntl } from 'react-intl'
+
 import './index.less'
 
 const { Option } = Select
 
 function SearchForm(props) {
+  // 得到一个国际化对象
+  const intl = useIntl()
   const [form] = Form.useForm()
   // 定义存储讲师列表的状态
   const [teacherList, setTeacherList] = useState([])
@@ -196,13 +202,21 @@ function SearchForm(props) {
 
   return (
     <Form layout='inline' form={form} onFinish={finish}>
-      <Form.Item name='title' label='标题'>
-        <Input placeholder='课程标题' style={{ width: 250, marginRight: 20 }} />
+      {/* <Form.Item name='title' label='标题'> 国际化之前写法*/}
+      <Form.Item name='title' label={<FormattedMessage id='title' />}>
+        <Input
+          placeholder={intl.formatMessage({
+            id: 'title'
+          })}
+          style={{ width: 250, marginRight: 20 }}
+        />
       </Form.Item>
-      <Form.Item name='teacherId' label='讲师'>
+      <Form.Item name='teacherId' label={<FormattedMessage id='teacher' />}>
         <Select
           allowClear
-          placeholder='课程讲师'
+          placeholder={intl.formatMessage({
+            id: 'teacher'
+          })}
           style={{ width: 250, marginRight: 20 }}
         >
           {teacherList.map(item => (
@@ -215,14 +229,16 @@ function SearchForm(props) {
           <Option value='lucy3'>Lucy3</Option> */}
         </Select>
       </Form.Item>
-      <Form.Item name='subject' label='分类'>
+      <Form.Item name='subject' label={<FormattedMessage id='subject' />}>
         <Cascader
           style={{ width: 250, marginRight: 20 }}
           options={subjectList} // 多级拉下菜单的数据
           loadData={loadData} // 点击课程分类的时候,loadData会触发,在这里去加载二级数据
           onChange={onChange} // 选中课程分类之后触发
           // changeOnSelect
-          placeholder='课程分类'
+          placeholder={intl.formatMessage({
+            id: 'subject'
+          })}
         />
       </Form.Item>
       <Form.Item>
@@ -231,9 +247,11 @@ function SearchForm(props) {
           htmlType='submit'
           style={{ margin: '0 10px 0 30px' }}
         >
-          查询
+          {<FormattedMessage id='searchBtn' />}
         </Button>
-        <Button onClick={resetForm}>重置</Button>
+        <Button onClick={resetForm}>
+          {<FormattedMessage id='resetBtn' />}
+        </Button>
       </Form.Item>
     </Form>
   )

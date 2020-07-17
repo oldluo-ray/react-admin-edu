@@ -16,6 +16,7 @@
     "mockjs": "^1.1.0",
     "nanoid": "^3.1.10",
     "nprogress": "^0.2.0",
+    "pubsub-js": "^1.8.0",
     "qiniu-js": "^3.0.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",

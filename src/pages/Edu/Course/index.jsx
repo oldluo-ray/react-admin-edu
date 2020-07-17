@@ -12,6 +12,9 @@ import {
 } from '@ant-design/icons'
 
 import { connect } from 'react-redux'
+
+import { FormattedMessage } from 'react-intl'
+
 import SearchForm from './SearchForm'
 import { getCourseList } from './redux'
 
@@ -256,7 +259,7 @@ class Course extends Component {
 
         <div className='course-table'>
           <div className='course-table-header'>
-            <h3>课程数据列表</h3>
+            <h3>{<FormattedMessage id='courseList' />}</h3>
             <div>
               <Button type='primary' style={{ marginRight: 10 }}>
                 <PlusOutlined />
