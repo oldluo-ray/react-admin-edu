@@ -83,27 +83,12 @@ class PrimaryLayout extends Component {
   handleChangeLanguage = language => () => {
     //将选中的语言传到app组件里面
     PubSub.publish('LANGUAGE', language)
+
+    // 修改
+    this.setState({
+      currentLanguage: language
+    })
   }
-  intlMenu = (
-    <Menu>
-      <Menu.Item>
-        <Button
-          type={this.state.currentLanguage === 'zh' ? 'link' : 'text'}
-          onClick={this.handleChangeLanguage('zh')}
-        >
-          中文
-        </Button>
-      </Menu.Item>
-      <Menu.Item>
-        <Button
-          type={this.state.currentLanguage === 'en' ? 'link' : 'text'}
-          onClick={this.handleChangeLanguage('en')}
-        >
-          english
-        </Button>
-      </Menu.Item>
-    </Menu>
-  )
 
   selectRoute = (routes = [], pathname) => {
     for (let i = 0; i < routes.length; i++) {
@@ -170,6 +155,27 @@ class PrimaryLayout extends Component {
 
     const route = this.selectRoute(routes, pathname)
 
+    const intlMenu = (
+      <Menu>
+        <Menu.Item>
+          <Button
+            type={this.state.currentLanguage === 'zh' ? 'link' : 'text'}
+            onClick={this.handleChangeLanguage('zh')}
+          >
+            中文
+          </Button>
+        </Menu.Item>
+        <Menu.Item>
+          <Button
+            type={this.state.currentLanguage === 'en' ? 'link' : 'text'}
+            onClick={this.handleChangeLanguage('en')}
+          >
+            english
+          </Button>
+        </Menu.Item>
+      </Menu>
+    )
+
     return (
       <Layout className='layout'>
         <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -199,7 +205,7 @@ class PrimaryLayout extends Component {
                   </span>
                 </Dropdown>
                 <span className='site-layout-lang'>
-                  <Dropdown overlay={this.intlMenu}>
+                  <Dropdown overlay={intlMenu}>
                     <GlobalOutlined />
                   </Dropdown>
                 </span>
