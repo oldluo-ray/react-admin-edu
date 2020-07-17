@@ -34,7 +34,7 @@ function SearchForm(props) {
         reqALLSubjectList()
       ])
       // console.log(res)
-
+      // 由于使用了cascader组件,我们需要将subjectList中的数据结构,改成cascader组件要求的数据结构
       const options = subjectList.map(subject => {
         return {
           value: subject._id,
@@ -50,8 +50,6 @@ function SearchForm(props) {
 
     fetchData()
   }, [])
-
-  // 由于使用了cascader组件,我们需要将subjectList中的数据结构,改成cascader组件要求的数据结构
 
   const onChange = (value, selectedOptions) => {
     console.log(value, selectedOptions)
