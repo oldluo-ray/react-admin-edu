@@ -106,6 +106,7 @@ function SearchForm() {
     // 调用之前定义好的方法,获取二级课程分类
     let secSubject = await reqGetSecSubjectList(targetOption.value)
     // console.log(secSubject)
+    // 如果一级菜单下面没有二级数据,那么就不需要给一级数据的children属性赋值了
 
     // 由于cascader组件,对渲染的数据,有格式要求,所以必须将二级分类数据,也进行数据重构
     secSubject = secSubject.items.map(item => {
@@ -117,7 +118,15 @@ function SearchForm() {
     // 让小圆圈隐藏
     targetOption.loading = false
     // 将二级数据添加给一级的children属性
-    targetOption.children = secSubject
+
+    // 如果一级菜单数据没有二级数据,那么点击一级,每一次都会去请求二级,就不能被选中了.
+    // 如果要选中,那么就要在获取二级数据之后,判断是否有二级数据,有二级数据就添加children属性,没有就给一级数据的isLeaf赋值为true. 表示没有二级数据,那么点击就会直接选中,不会请求二级数据了
+    if (secSubject.length > 0) {
+      targetOption.children = secSubject
+    } else {
+      targetOption.isLeaf = true
+    }
+
     // 更新subject
     setSubjectList([...subjectList])
   }
@@ -126,8 +135,39 @@ function SearchForm() {
     form.resetFields()
   }
 
+  // 点击查询按钮的事件处理函数
+  const finish = value => {
+    console.log(value)
+    /**
+     * subject: (2) ["5ee171adc311f5151c52332a", "5ee17310c311f5151c523334"]
+       teacherId: "5ee1ebc844086831e4a48eca"
+       title: undefined
+
+       subject: ["5ee172f9c311f5151c523331"]
+       teacherId: "5ee1ebc844086831e4a48eca"
+       title: undefined
+
+       总结: teacherId和title, 如果选择了,就是具体的值,没选就是undefined
+       但是subject不一样
+       如果只选了一级课程分类 --> subject数据中一条数据
+       如果只选了二级课程分类 --> subject数据中两条数据,第一条是一级,第二条是二级
+
+       如果要请求接口,获取课程列表数据
+       subjectId
+       subjectParentId
+
+       如果subject数组,只有一条数据
+       subjectId就是 subject[0]
+       subjectParentId 就是 0 
+
+       如果subject数组,有两条数据
+       subjectId 就是 subject[1]
+       subjectParentId 就是 subject[0]
+     */
+  }
+
   return (
-    <Form layout='inline' form={form}>
+    <Form layout='inline' form={form} onFinish={finish}>
       <Form.Item name='title' label='标题'>
         <Input placeholder='课程标题' style={{ width: 250, marginRight: 20 }} />
       </Form.Item>
