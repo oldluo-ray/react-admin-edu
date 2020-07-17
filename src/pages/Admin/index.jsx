@@ -10,9 +10,9 @@ export default class Admin extends Component {
     return (
       <div>
         <Analysis />
-        <Monitor />
+        {/* <Monitor />
         <Search />
-        <Statistics />
+        <Statistics /> */}
       </div>
     );
   }
