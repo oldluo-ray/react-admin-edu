@@ -69,6 +69,22 @@ const columnsData = [
 ]
 
 export default class Analysis extends Component {
+  state = {
+    loading: false
+  }
+  componentDidMount() {
+    //请求之前,改成展示
+    this.setState({
+      loading: true
+    })
+
+    setTimeout(() => {
+      //表示数据拿到了
+      this.setState({
+        loading: false
+      })
+    }, 2000)
+  }
   render() {
     return (
       <div>
@@ -167,6 +183,7 @@ export default class Analysis extends Component {
               // Card标题
               title={<Statistic title='运营结果' value={112893} />}
               footer={<span>转化率 80.9%</span>}
+              loading={this.state.loading} //表示展示骨架组件
             >
               <Progress
                 percent={80.9} // 进度值
