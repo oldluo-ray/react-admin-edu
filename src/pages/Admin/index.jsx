@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import Analysis from "./Analysis";
-import Monitor from "./Monitor";
-import Search from "./Search";
-import Statistics from "./Statistics";
+import Analysis from './Analysis'
+// import Monitor from './Monitor'
+// import Search from './Search'
+// import Statistics from './Statistics'
 
 export default class Admin extends Component {
   render() {
@@ -14,6 +14,6 @@ export default class Admin extends Component {
         <Search />
         <Statistics /> */}
       </div>
-    );
+    )
   }
 }
