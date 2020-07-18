@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import Analysis from './Analysis'
 import Scales from './Scales'
+import Search from './Search'
 
 export default class Admin extends Component {
   render() {
@@ -9,6 +10,7 @@ export default class Admin extends Component {
       <div>
         <Analysis />
         <Scales />
+        <Search />
       </div>
     )
   }

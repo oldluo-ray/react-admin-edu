@@ -35,6 +35,7 @@ export default class Scales extends Component {
     rangeDate: [moment(), moment()]
   }
 
+  // 按钮的事件处理函数
   handleBtnClick = activeBtn => () => {
     // 计算范围时间
     let rangeDate
@@ -56,6 +57,16 @@ export default class Scales extends Component {
     this.setState({
       activeBtn,
       rangeDate
+    })
+  }
+
+  // 在rangePicker组件中选择了新的日期范围后触发的事件处理函数
+  handleRangeChange = (dates, dateString) => {
+    // dates拿到的就是 rangepicker中选择的日期范围
+    // console.log(dates, dateString)
+
+    this.setState({
+      rangeDate: dates
     })
   }
   render() {
@@ -95,7 +106,7 @@ export default class Scales extends Component {
             // 一般使用moment来定义事件
             今日 [moment(), moment()]
         */}
-        <RangePicker value={rangeDate} />
+        <RangePicker value={rangeDate} onChange={this.handleRangeChange} />
       </>
     )
 
