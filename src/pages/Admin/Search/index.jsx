@@ -10,8 +10,11 @@ import {
   Tooltip,
   Interval,
   Interaction,
-  Coordinate
+  Coordinate,
+  Legend
 } from 'bizcharts'
+
+import './index.less'
 
 const data = [
   {
@@ -74,7 +77,7 @@ export default class Search extends Component {
       </>
     )
     return (
-      <div>
+      <div className='search'>
         <Card title='销售额类型占比' extra={extra}>
           {/* bizcharts里面所有的图标的根组件 
             data就是数据源
@@ -104,16 +107,29 @@ export default class Search extends Component {
                 // 获取items的颜色
                 const color = items[0].color
                 // return <div>自定义tooltip</div>
-                return null
+                return (
+                  <div class='tooltip'>
+                    <span
+                      className='dot'
+                      style={{ backgroundColor: color }}
+                    ></span>
+                    <span style={{ marginRight: 5 }}>{title}</span>
+                    <span>{items[0].value}</span>
+                  </div>
+                )
               }}
             </Tooltip>
+            {/* 饼图的主体组件 */}
             <Interval
-              adjust='stack'
-              position='value'
-              color='type'
-              shape='sliceShape'
+              adjust='stack' // 图表的样式
+              position='value' // 设置图标依据的值
+              color='type' //根据数据定义颜色
+              shape='sliceShape' // 图标的展示的形式
             />
+            {/* 交互效果 */}
             <Interaction type='element-single-selected' />
+            {/* 图例组件 */}
+            <Legend position='right'></Legend>
           </Chart>
         </Card>
       </div>
