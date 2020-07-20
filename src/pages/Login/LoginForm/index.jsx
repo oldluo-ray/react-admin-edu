@@ -18,21 +18,17 @@ import './index.less'
 
 const { TabPane } = Tabs
 
-@withRouter
-@connect(
-  null,
-  {
-    login
-  }
-)
-class LoginForm extends Component {
-  onFinish = ({ username, password }) => {
-    this.props.login(username, password).then(token => {
+function LoginForm(props) {
+  const [form] = Form.useForm()
+
+  const onFinish = ({ username, password }) => {
+    // console.log('finish执行了')
+    props.login(username, password).then(token => {
       // 登录成功
       // console.log("登陆成功~");
       // 持久存储token
       localStorage.setItem('user_token', token)
-      this.props.history.replace('/')
+      props.history.replace('/')
     })
     // .catch(error => {
     //   notification.error({
@@ -42,7 +38,7 @@ class LoginForm extends Component {
     // });
   }
 
-  validator = (rules, value) => {
+  const validator = (rules, value) => {
     // console.log(rules, value)
     // rules 表示校验的是哪个表单项
     // value 表单项的值
@@ -80,21 +76,41 @@ class LoginForm extends Component {
     })
   }
 
-  render() {
-    return (
-      <>
-        <Form
-          name='normal_login'
-          className='login-form'
-          initialValues={{ remember: true }}
-          onFinish={this.onFinish}
+  const getVerifyCode = async () => {
+    // console.log('获取验证码按钮触发了')
+    // 1. 手动触发表单的表单的校验,只有校验通过了,才去执行后续代码
+    // 调用form实例的validateFields方法
+    // form
+    //   // .validateFields() // 如果不传参,会校验表单项所有的表单
+    //   .validateFields(['phone']) // 如果传参,只校验指定的表单项
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+    // .catch(err => {
+    //   console.log(err)
+    // })
+
+    const res = await form.validateFields(['phone'])
+    // 如果验证不成功,后面就不会执行,成功了后面代码就可以执行
+    console.log('成功', res)
+  }
+
+  return (
+    <>
+      <Form
+        name='normal_login'
+        className='login-form'
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        // 将form实例和Form组件关联起来
+        form={form}
+      >
+        <Tabs
+          defaultActiveKey='user'
+          tabBarStyle={{ display: 'flex', justifyContent: 'center' }}
         >
-          <Tabs
-            defaultActiveKey='user'
-            tabBarStyle={{ display: 'flex', justifyContent: 'center' }}
-          >
-            <TabPane tab='账户密码登陆' key='user'>
-              {/* 
+          <TabPane tab='账户密码登陆' key='user'>
+            {/* 
                 用户名的校验规则: 
                 1. 必填项
                 2. 长度大于4个字符
@@ -105,105 +121,123 @@ class LoginForm extends Component {
                 点击表单的提交按钮,提交前也会触发
               
               */}
-              <Form.Item
-                name='username'
-                rules={[
-                  {
-                    required: true,
-                    message: '必须输入用户名'
-                  },
-                  {
-                    min: 4,
-                    message: '用户名至少四个字符'
-                  },
-                  {
-                    max: 16,
-                    message: '用户名不能超过十六个字符'
-                  },
-                  {
-                    pattern: /^[0-9a-zA-Z_]+$/,
-                    message: '只能输入数字字母下划线'
-                  }
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined className='form-icon' />}
-                  placeholder='用户名: admin'
-                />
-              </Form.Item>
-              <Form.Item
-                name='password'
-                // antd 表单校验第二种方式
-                rules={[{ validator: this.validator }]}
-              >
-                <Input
-                  prefix={<LockOutlined className='form-icon' />}
-                  type='password'
-                  placeholder='密码: 111111'
-                />
-              </Form.Item>
-            </TabPane>
-            <TabPane tab='手机号登陆' key='phone'>
-              <Form.Item name='phone'>
-                <Input
-                  prefix={<MobileOutlined className='form-icon' />}
-                  placeholder='手机号'
-                />
-              </Form.Item>
-
-              <Row justify='space-between'>
-                <Col span={16}>
-                  <Form.Item name='verify'>
-                    <Input
-                      prefix={<MailOutlined className='form-icon' />}
-                      placeholder='验证码'
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={7}>
-                  <Button className='verify-btn'>获取验证码</Button>
-                </Col>
-              </Row>
-            </TabPane>
-          </Tabs>
-          <Row justify='space-between'>
-            <Col span={7}>
-              <Form.Item name='remember' valuePropName='checked' noStyle>
-                <Checkbox>自动登陆</Checkbox>
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Button type='link'>忘记密码</Button>
-            </Col>
-          </Row>
-          <Form.Item>
-            <Button
-              type='primary'
-              htmlType='submit'
-              className='login-form-button'
+            <Form.Item
+              name='username'
+              rules={[
+                {
+                  required: true,
+                  message: '必须输入用户名'
+                },
+                {
+                  min: 4,
+                  message: '用户名至少四个字符'
+                },
+                {
+                  max: 16,
+                  message: '用户名不能超过十六个字符'
+                },
+                {
+                  pattern: /^[0-9a-zA-Z_]+$/,
+                  message: '只能输入数字字母下划线'
+                }
+              ]}
             >
-              登陆
-            </Button>
-          </Form.Item>
-          <Form.Item>
+              <Input
+                prefix={<UserOutlined className='form-icon' />}
+                placeholder='用户名: admin'
+              />
+            </Form.Item>
+            <Form.Item
+              name='password'
+              // antd 表单校验第二种方式
+              rules={[{ validator }]}
+            >
+              <Input
+                prefix={<LockOutlined className='form-icon' />}
+                type='password'
+                placeholder='密码: 111111'
+              />
+            </Form.Item>
+          </TabPane>
+          <TabPane tab='手机号登陆' key='phone'>
+            <Form.Item
+              name='phone'
+              rules={[
+                {
+                  required: true,
+                  message: '请输入手机号'
+                },
+                {
+                  pattern: /^1[3456789]\d{9}$/,
+                  message: '你输入不是手机号'
+                }
+              ]}
+            >
+              <Input
+                prefix={<MobileOutlined className='form-icon' />}
+                placeholder='手机号'
+              />
+            </Form.Item>
+
             <Row justify='space-between'>
               <Col span={16}>
-                <span>
-                  其他登陆方式
-                  <GithubOutlined className='login-icon' />
-                  <WechatOutlined className='login-icon' />
-                  <QqOutlined className='login-icon' />
-                </span>
+                <Form.Item name='verify'>
+                  <Input
+                    prefix={<MailOutlined className='form-icon' />}
+                    placeholder='验证码'
+                  />
+                </Form.Item>
               </Col>
-              <Col span={3}>
-                <Button type='link'>注册</Button>
+              <Col span={7}>
+                <Button className='verify-btn' onClick={getVerifyCode}>
+                  获取验证码
+                </Button>
               </Col>
             </Row>
-          </Form.Item>
-        </Form>
-      </>
-    )
-  }
+          </TabPane>
+        </Tabs>
+        <Row justify='space-between'>
+          <Col span={7}>
+            <Form.Item name='remember' valuePropName='checked' noStyle>
+              <Checkbox>自动登陆</Checkbox>
+            </Form.Item>
+          </Col>
+          <Col span={5}>
+            <Button type='link'>忘记密码</Button>
+          </Col>
+        </Row>
+        <Form.Item>
+          <Button
+            type='primary'
+            htmlType='submit'
+            className='login-form-button'
+          >
+            登陆
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Row justify='space-between'>
+            <Col span={16}>
+              <span>
+                其他登陆方式
+                <GithubOutlined className='login-icon' />
+                <WechatOutlined className='login-icon' />
+                <QqOutlined className='login-icon' />
+              </span>
+            </Col>
+            <Col span={3}>
+              <Button type='link'>注册</Button>
+            </Col>
+          </Row>
+        </Form.Item>
+      </Form>
+    </>
+  )
 }
 
-export default LoginForm
+export default withRouter(
+  connect(
+    null,
+    { login }
+  )(LoginForm)
+)
