@@ -12,3 +12,15 @@ export function reqGetverifyCode(mobile) {
     }
   })
 }
+
+// 获取菜单权限数据
+export function reqMobileLogin(mobile, code) {
+  return request({
+    url: `${BASE_URL}/mobile`,
+    method: 'POST',
+    data: {
+      mobile,
+      code
+    }
+  })
+}

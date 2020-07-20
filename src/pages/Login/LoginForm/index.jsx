@@ -12,7 +12,7 @@ import {
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import { login } from '@redux/actions/login'
+import { login, mobileLogin } from '@redux/actions/login'
 import { reqGetverifyCode } from '@api/acl/oauth'
 
 import './index.less'
@@ -30,12 +30,9 @@ function LoginForm(props) {
   // 这个是登录按钮 点击事件的事件处理函数
   const onFinish = () => {
     //1. 判断当前这个登录按钮,是用户名密码登录还是手机登录
-
-    // console.log(activeKey)
     if (activeKey === 'user') {
       // 校验用户名和密码
       form.validateFields(['username', 'password']).then(res => {
-        // console.log(res)
         let { username, password } = res
         props.login(username, password).then(token => {
           // 登录成功
@@ -47,21 +44,18 @@ function LoginForm(props) {
       })
     } else {
       // 校验手机号和验证码
+      // 校验用户名和密码
+      form.validateFields(['phone', 'verify']).then(res => {
+        let { phone, verify } = res
+        props.mobileLogin(phone, verify).then(token => {
+          // 登录成功
+          // console.log("登陆成功~");
+          // 持久存储token
+          localStorage.setItem('user_token', token)
+          props.history.replace('/')
+        })
+      })
     }
-    // console.log('finish执行了')
-    // props.login(username, password).then(token => {
-    //   // 登录成功
-    //   // console.log("登陆成功~");
-    //   // 持久存储token
-    //   localStorage.setItem('user_token', token)
-    //   props.history.replace('/')
-    // })
-    // .catch(error => {
-    //   notification.error({
-    //     message: "登录失败",
-    //     description: error
-    //   });
-    // });
   }
 
   // antd中第二种校验方式
@@ -124,7 +118,7 @@ function LoginForm(props) {
     // 2. 给开发者服务器发送请求
     // 注意:为了节省开支,获取验证码的代码,测试一次之后,最好注释掉,手机登录所有逻辑完成再打开
 
-    // await reqGetverifyCode(res.phone)
+    await reqGetverifyCode(res.phone)
 
     //后面的代码可以执行,说明验证码请求成功了
 
@@ -160,7 +154,7 @@ function LoginForm(props) {
         name='normal_login'
         className='login-form'
         initialValues={{ remember: true }}
-        onFinish={onFinish}
+        // onFinish={onFinish}
         // 将form实例和Form组件关联起来
         form={form}
       >
@@ -316,6 +310,6 @@ function LoginForm(props) {
 export default withRouter(
   connect(
     null,
-    { login }
+    { login, mobileLogin }
   )(LoginForm)
 )
