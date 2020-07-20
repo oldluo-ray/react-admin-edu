@@ -25,16 +25,37 @@ function LoginForm(props) {
 
   const [isShowDownCount, setIsShowDownCount] = useState(false)
   let [downCount, setDownCount] = useState(5)
+  const [activeKey, setActiveKey] = useState('user')
 
-  const onFinish = ({ username, password }) => {
+  // 这个是登录按钮 点击事件的事件处理函数
+  const onFinish = () => {
+    //1. 判断当前这个登录按钮,是用户名密码登录还是手机登录
+
+    // console.log(activeKey)
+    if (activeKey === 'user') {
+      // 校验用户名和密码
+      form.validateFields(['username', 'password']).then(res => {
+        // console.log(res)
+        let { username, password } = res
+        props.login(username, password).then(token => {
+          // 登录成功
+          // console.log("登陆成功~");
+          // 持久存储token
+          localStorage.setItem('user_token', token)
+          props.history.replace('/')
+        })
+      })
+    } else {
+      // 校验手机号和验证码
+    }
     // console.log('finish执行了')
-    props.login(username, password).then(token => {
-      // 登录成功
-      // console.log("登陆成功~");
-      // 持久存储token
-      localStorage.setItem('user_token', token)
-      props.history.replace('/')
-    })
+    // props.login(username, password).then(token => {
+    //   // 登录成功
+    //   // console.log("登陆成功~");
+    //   // 持久存储token
+    //   localStorage.setItem('user_token', token)
+    //   props.history.replace('/')
+    // })
     // .catch(error => {
     //   notification.error({
     //     message: "登录失败",
@@ -43,6 +64,7 @@ function LoginForm(props) {
     // });
   }
 
+  // antd中第二种校验方式
   const validator = (rules, value) => {
     // console.log(rules, value)
     // rules 表示校验的是哪个表单项
@@ -81,6 +103,7 @@ function LoginForm(props) {
     })
   }
 
+  // 获取验证码事件处理函数
   const getVerifyCode = async () => {
     // console.log('获取验证码按钮触发了')
     // 1. 手动触发表单的表单的校验,只有校验通过了,才去执行后续代码
@@ -119,8 +142,16 @@ function LoginForm(props) {
         clearInterval(timeId)
         //取消按钮禁用
         setIsShowDownCount(false)
+        //恢复倒计时时间
+        setDownCount(5)
       }
     }, 1000)
+  }
+
+  // tab切换触发的事件处理函数
+  const handleTabChange = activeKey => {
+    // console.log(activeKey)
+    setActiveKey(activeKey)
   }
 
   return (
@@ -136,6 +167,8 @@ function LoginForm(props) {
         <Tabs
           defaultActiveKey='user'
           tabBarStyle={{ display: 'flex', justifyContent: 'center' }}
+          // 切换页签的时候触发
+          onChange={handleTabChange}
         >
           <TabPane tab='账户密码登陆' key='user'>
             {/* 
@@ -209,7 +242,19 @@ function LoginForm(props) {
 
             <Row justify='space-between'>
               <Col span={16}>
-                <Form.Item name='verify'>
+                <Form.Item
+                  name='verify'
+                  rules={[
+                    {
+                      required: true,
+                      message: '请输入验证码'
+                    },
+                    {
+                      pattern: /^[\d]{6}$/,
+                      message: '请输入验证码'
+                    }
+                  ]}
+                >
                   <Input
                     prefix={<MailOutlined className='form-icon' />}
                     placeholder='验证码'
@@ -241,8 +286,9 @@ function LoginForm(props) {
         <Form.Item>
           <Button
             type='primary'
-            htmlType='submit'
+            // htmlType='submit'
             className='login-form-button'
+            onClick={onFinish}
           >
             登陆
           </Button>
