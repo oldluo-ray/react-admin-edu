@@ -148,6 +148,12 @@ function LoginForm(props) {
     setActiveKey(activeKey)
   }
 
+  // git第三方授权登录点击事件
+  const gitOauthLogin = () => {
+    window.location.href =
+      'https://github.com/login/oauth/authorize?client_id=fbeb41ce3f9acc6198a1'
+  }
+
   return (
     <>
       <Form
@@ -292,7 +298,10 @@ function LoginForm(props) {
             <Col span={16}>
               <span>
                 其他登陆方式
-                <GithubOutlined className='login-icon' />
+                <GithubOutlined
+                  className='login-icon'
+                  onClick={gitOauthLogin}
+                />
                 <WechatOutlined className='login-icon' />
                 <QqOutlined className='login-icon' />
               </span>
