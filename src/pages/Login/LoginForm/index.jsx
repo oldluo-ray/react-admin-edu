@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import { Form, Input, Button, Checkbox, Row, Col, Tabs } from 'antd'
 import {
   UserOutlined,
@@ -13,13 +13,18 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import { login } from '@redux/actions/login'
+import { reqGetverifyCode } from '@api/acl/oauth'
 
 import './index.less'
 
 const { TabPane } = Tabs
 
+// let downCount = 5
 function LoginForm(props) {
   const [form] = Form.useForm()
+
+  const [isShowDownCount, setIsShowDownCount] = useState(false)
+  let [downCount, setDownCount] = useState(5)
 
   const onFinish = ({ username, password }) => {
     // console.log('finish执行了')
@@ -92,7 +97,30 @@ function LoginForm(props) {
 
     const res = await form.validateFields(['phone'])
     // 如果验证不成功,后面就不会执行,成功了后面代码就可以执行
-    console.log('成功', res)
+    // console.log('成功', res)
+    // 2. 给开发者服务器发送请求
+    // 注意:为了节省开支,获取验证码的代码,测试一次之后,最好注释掉,手机登录所有逻辑完成再打开
+
+    // await reqGetverifyCode(res.phone)
+
+    //后面的代码可以执行,说明验证码请求成功了
+
+    // 3. 当请求发出去之后,按钮应该展示倒计时,并且倒计时的过程中,按钮不能点击
+    // 点击获取验证码之后,让按钮禁用,然后展示倒计时
+    setIsShowDownCount(true)
+    // 定义一个定时器,修改倒计时的时间
+    let timeId = setInterval(() => {
+      // console.log(downCount)
+      // 修改倒计时的时间
+      downCount--
+      setDownCount(downCount)
+      if (downCount <= 0) {
+        //清除定时器
+        clearInterval(timeId)
+        //取消按钮禁用
+        setIsShowDownCount(false)
+      }
+    }, 1000)
   }
 
   return (
@@ -189,8 +217,12 @@ function LoginForm(props) {
                 </Form.Item>
               </Col>
               <Col span={7}>
-                <Button className='verify-btn' onClick={getVerifyCode}>
-                  获取验证码
+                <Button
+                  className='verify-btn'
+                  onClick={getVerifyCode}
+                  disabled={isShowDownCount}
+                >
+                  {isShowDownCount ? `${downCount}秒后获取` : '获取验证码'}
                 </Button>
               </Col>
             </Row>
