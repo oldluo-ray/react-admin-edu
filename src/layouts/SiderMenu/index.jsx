@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Layout, Menu, Breadcrumb } from 'antd'
+import { Link } from 'react-router-dom'
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -11,6 +12,8 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined
 } from '@ant-design/icons'
+
+import Icons from '@conf/icons'
 
 import { defaultRoutes } from '@conf/routes'
 
@@ -26,14 +29,23 @@ class SiderMenu extends Component {
     return menus.map(menu => {
       // 先判断当前这个菜单是否要展示,判断依据就是menu中的hidden属性的值,true,不展示, false展示
       if (menu.hidden) return
+
+      // 通过icon字符串,找到对应的icon组件
+      const Icon = Icons[menu.icon]
       // 要展示了
       if (menu.children && menu.children.length) {
         //表示有二级菜单
         return (
-          <SubMenu key={menu.path} icon={<TeamOutlined />} title={menu.name}>
+          <SubMenu key={menu.path} icon={<Icon />} title={menu.name}>
             {menu.children.map(secMenu => {
               if (secMenu.hidden) return
-              return <Menu.Item key={secMenu.path}>{secMenu.name}</Menu.Item>
+
+              return (
+                <Menu.Item key={secMenu.path}>
+                  {/*注意:  二级菜单的路径: 是一级菜单的path + 二级菜单的path */}
+                  <Link to={menu.path + secMenu.path}>{secMenu.name}</Link>
+                </Menu.Item>
+              )
             })}
           </SubMenu>
         )
@@ -41,8 +53,9 @@ class SiderMenu extends Component {
         //只有一级菜单
         // 这里return, 是给新数组添加一个菜单组件
         return (
-          <Menu.Item key={menu.path} icon={<PieChartOutlined />}>
-            {menu.name}
+          // 注意: 只有首页的一级菜单才需要使用Link
+          <Menu.Item key={menu.path} icon={<Icon />}>
+            {menu.path === '/' ? <Link to='/'>{menu.name}</Link> : menu.name}
           </Menu.Item>
         )
       }
@@ -60,22 +73,6 @@ class SiderMenu extends Component {
         <Menu theme='dark' defaultSelectedKeys={['1']} mode='inline'>
           {this.renderMenu(defaultRoutes)}
           {this.renderMenu(this.props.permissionList)}
-          {/* <Menu.Item key='1' icon={<PieChartOutlined />}>
-            Option 1
-          </Menu.Item>
-          <Menu.Item key='2' icon={<DesktopOutlined />}>
-            Option 2
-          </Menu.Item>
-          <SubMenu key='sub1' icon={<UserOutlined />} title='User'>
-            <Menu.Item key='3'>Tom</Menu.Item>
-            <Menu.Item key='4'>Bill</Menu.Item>
-            <Menu.Item key='5'>Alex</Menu.Item>
-          </SubMenu>
-          <SubMenu key='sub2' icon={<TeamOutlined />} title='Team'>
-            <Menu.Item key='6'>Team 1</Menu.Item>
-            <Menu.Item key='8'>Team 2</Menu.Item>
-          </SubMenu>
-          <Menu.Item key='9' icon={<FileOutlined />} /> */}
         </Menu>
       </>
     )
