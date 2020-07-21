@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Suspense } from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 import { constantRoutes } from '@conf/routes'
@@ -18,13 +18,19 @@ class PublicLayout extends Component {
   }
 
   render() {
-    return <Switch>{this.renderRoute(constantRoutes)}</Switch>
+    return (
+      <Suspense
+        fallback={<div style={{ color: 'red', fontSize: 40 }}>...loading</div>}
+      >
+        <Switch>{this.renderRoute(constantRoutes)}</Switch>{' '}
+      </Suspense>
+    )
   }
 
   /**
    *  <Switch>
-   *        <Route path={} component={}></Route>
-   *        <Route path={} component={}></Route>
+   *        <Route path={} component={Login}></Route>
+   *        <Route path={} component={NotFound}></Route>
    *        <Route path={} component={}></Route>
    * </Switch>
    * 
