@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Layout, Menu, Breadcrumb } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -19,6 +19,7 @@ import { defaultRoutes } from '@conf/routes'
 
 const { SubMenu } = Menu
 
+@withRouter
 @connect(state => ({ permissionList: state.user.permissionList }))
 class SiderMenu extends Component {
   // 定义一个函数,在函数中遍历数组,动态渲染菜单
@@ -41,7 +42,7 @@ class SiderMenu extends Component {
               if (secMenu.hidden) return
 
               return (
-                <Menu.Item key={secMenu.path}>
+                <Menu.Item key={menu.path + secMenu.path}>
                   {/*注意:  二级菜单的路径: 是一级菜单的path + 二级菜单的path */}
                   <Link to={menu.path + secMenu.path}>{secMenu.name}</Link>
                 </Menu.Item>
@@ -65,12 +66,27 @@ class SiderMenu extends Component {
   render() {
     // console.log(this.props)
 
+    const path = this.props.location.pathname
+    // console.log(path)
+
+    // 为了实现,默认展开一级菜单,需要将path里面的第一个/xxx获取到
+    // 字符串有一个match方法,match里面传入一个正则表达式,可以返回一个数组,数组存储了我们要提取的值
+    // 注意:一般正则匹配要加^$, 但是正则提取不加
+    const reg = /[/][a-z]*/ //提取一级菜单路径的正则
+
+    const firstPath = path.match(reg)[0]
+
     // 注意: 在SiderMenu里面要遍历两个数组
     // 1. config/routes.js/defaultRoutes ==> 登录之后的首页
     // 2. redux中的permissionList. ==> 权限管理,教育管理,个人管理
     return (
       <>
-        <Menu theme='dark' defaultSelectedKeys={['1']} mode='inline'>
+        <Menu
+          theme='dark'
+          defaultSelectedKeys={[path]}
+          mode='inline'
+          defaultOpenKeys={[firstPath]}
+        >
           {this.renderMenu(defaultRoutes)}
           {this.renderMenu(this.props.permissionList)}
         </Menu>
