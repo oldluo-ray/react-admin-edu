@@ -12,8 +12,17 @@ export default function user(prevState = initUser, action) {
       return {
         // 解构原来的数据
         ...prevState,
+
+      
+      
+     
+        // permissionList: [] // 用户菜单级别的权限/路由级别的权限
+
         // 解构新的数据,新的会覆盖原来的
         ...action.data
+        // name: '', // 用户名
+        // avatar: '', // 用户头像
+        // // permissionValueList: [], // 用户按钮级别权限
       }
     case GET_USER_MENU:
       return {
