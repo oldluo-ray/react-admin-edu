@@ -229,7 +229,8 @@ export const defaultRoutes = [
     path: '/',
     component: 'Admin',
     icon: 'home',
-    name: '后台管理系统'
+    name: '后台管理系统',
+    hidden: false
   }
   // { path: "*", redirect: "/404", component: NotFound, hidden: true }
 ]

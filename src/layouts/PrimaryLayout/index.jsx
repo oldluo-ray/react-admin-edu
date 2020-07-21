@@ -11,12 +11,15 @@ import {
   MenuFoldOutlined
 } from '@ant-design/icons'
 
+// 导入sidermenu
+import SiderMenu from '../SiderMenu'
+
 import './index.less'
 
 import logo from '@assets/images/logo.png'
 
 const { Header, Content, Footer, Sider } = Layout
-const { SubMenu } = Menu
+// const { SubMenu } = Menu
 
 export default class PrimaryLayout extends Component {
   state = {
@@ -40,7 +43,8 @@ export default class PrimaryLayout extends Component {
             {/* <h1>硅谷教育管理系统</h1> */}
             {!this.state.collapsed && <h1>硅谷教育管理系统</h1>}
           </div>
-          <Menu theme='dark' defaultSelectedKeys={['1']} mode='inline'>
+          <SiderMenu></SiderMenu>
+          {/* <Menu theme='dark' defaultSelectedKeys={['1']} mode='inline'>
             <Menu.Item key='1' icon={<PieChartOutlined />}>
               Option 1
             </Menu.Item>
@@ -57,7 +61,7 @@ export default class PrimaryLayout extends Component {
               <Menu.Item key='8'>Team 2</Menu.Item>
             </SubMenu>
             <Menu.Item key='9' icon={<FileOutlined />} />
-          </Menu>
+          </Menu> */}
         </Sider>
 
         <Layout className='site-layout'>

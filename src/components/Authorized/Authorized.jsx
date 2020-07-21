@@ -17,9 +17,6 @@ class Authorized extends Component {
     // await this.props.getUserMenu ()
     // 改成下面的方式
     //发送请求获取数据
-    // this.setState({
-    //   loading: false
-    // })
     let { getUserInfo, getUserMenu } = this.props
 
     await Promise.all([getUserInfo(), getUserMenu()])
