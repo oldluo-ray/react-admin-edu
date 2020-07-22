@@ -38,7 +38,8 @@ dayjs.extend(relativeTime)
     //   state.course.permissionValueList,
     //   "Course"
     // )
-    chapterList: state.chapterList
+    chapterList: state.chapterList,
+    permissionValueList: state.user.permissionValueList
   }),
   { getLessonList, batchDelChapter, batchDelLesson }
   // { getcourseList }
@@ -182,6 +183,10 @@ class Chapter extends Component {
   render() {
     const { previewVisible, previewImage, selectedRowKeys } = this.state
 
+    const { permissionValueList } = this.props
+
+    const index = permissionValueList.indexOf('chapter.addlesson')
+
     const columns = [
       {
         title: '章节名称',
@@ -223,7 +228,7 @@ class Chapter extends Component {
           // 如果是章节,章节数据中没有free属性,课时数据中有
           return (
             <div>
-              {data.free === undefined && (
+              {index > -1 && data.free === undefined && (
                 <Tooltip title='新增课时'>
                   <Button
                     type='primary'

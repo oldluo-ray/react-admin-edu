@@ -56,6 +56,7 @@ class AuthorizedRouter extends React.Component {
   render() {
     return (
       <Suspense fallback={<Spin />}>
+        {/* <Route path={} component={懒加载的组件}></Route> */}
         {this.renderRoute(defaultRoutes)}
         {this.renderRoute(this.props.permissionList)}
       </Suspense>
