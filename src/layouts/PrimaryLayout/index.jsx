@@ -15,6 +15,7 @@ import {
 
 // 导入sidermenu
 import SiderMenu from '../SiderMenu'
+import AuthorizedRouter from '@comps/Authorized/AuthorizedRouter'
 
 import './index.less'
 
@@ -124,7 +125,9 @@ class PrimaryLayout extends Component {
               )}
             </div>
 
-            <div className='layout-content'>Bill is a cat.</div>
+            <div className='layout-content'>
+              <AuthorizedRouter></AuthorizedRouter>
+            </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
             Ant Design ©2018 Created by Ant UED
